@@ -1,0 +1,27 @@
+var inputFolder = Folder.selectDialog("Select the input folder");
+var outputFolder = Folder.selectDialog("Select the output folder");
+var pdfFiles = inputFolder.getFiles("*.pdf");
+pdfFiles.sort(function(a, b) {
+    return a.name > b.name;
+});
+for (var i = 0; i < pdfFiles.length; i++) {
+    var pdfFile = pdfFiles[i];
+    var doc = app.open(pdfFile);
+    var pages = doc.pages;
+    var firstPage = pages[0];
+    var pageItems = firstPage.pageItems;
+    for (var j = 0; j < pageItems.length; j++) {
+        var item = pageItems[j];
+        if (item.typename === "GroupItem" && item.clipped) {
+            item.remove();
+        }
+        if (item.typename === "PathItem" && item.pathPoints.length === 4 && item.pathItems[0].kind != PathKind.CIRCLE) {
+            item.remove();
+        }
+    }
+    var saveFile = new File(outputFolder.fsName+ "/" + pdfFile.name.replace(".pdf", ".ai"));
+    var saveOpts = new IllustratorSaveOptions();
+    saveOpts.compatibility = Compatibility.ILLUSTRATOR8;
+    doc.saveAs(saveFile, saveOpts);
+    doc.close();
+}
