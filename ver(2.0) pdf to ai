@@ -1,0 +1,36 @@
+var inputFolder = Folder.selectDialog("Select the input folder");
+var outputFolder = Folder.selectDialog("Select the output folder");
+if(!outputFolder.exists) outputFolder.create();
+
+var pdfFiles = inputFolder.getFiles("*.pdf");
+pdfFiles.sort(function(a, b) {
+    return a.name > b.name;
+});
+
+var delay = 3000; // delay time in milliseconds
+
+for (var i = 0; i < pdfFiles.length; i++) {
+    setTimeout(function(pdfFile) {
+        try {
+            if(!pdfFile.exists) throw "File does not exist.";
+            if(!pdfFile.name.endsWith(".pdf")) throw "Invalid file format.";
+            if(app.documents.length > 0) {
+                for(var j = 0; j < app.documents.length; j++) {
+                    if(app.documents[j].name == pdfFile.name) {
+                        throw "File is already open.";
+                    }
+                }
+            }
+            var doc = app.open(pdfFile);
+            if(doc.pages.length == 0) throw "PDF file is empty.";
+            var firstPage = doc.pages[0];
+            var saveFile = new File(outputFolder + "/" + pdfFile.name.replace(".pdf",  ".ai"));
+            var saveOpts = new IllustratorSaveOptions();
+            saveOpts.compatibility = Compatibility.ILLUSTRATOR8;
+            firstPage.extract(saveFile, saveOpts);
+            doc.close();
+        } catch(e) {
+            alert(e);
+        }
+    }, delay*i, pdfFiles[i]);
+}
