@@ -7,6 +7,8 @@ pdfFiles.sort(function(a, b) {
     return a.name > b.name;
 });
 
+var delay = 3000; // delay time in milliseconds
+
 var currentIndex = 0;
 
 var intervalId = setInterval(function() {
@@ -20,9 +22,9 @@ var intervalId = setInterval(function() {
 
         if(!pdfFile.exists) throw "File does not exist.";
         if(!pdfFile.name.endsWith(".pdf")) throw "Invalid file format.";
-        if(app.documents.length > 0) {
-            for(var j = 0; j < app.documents.length; j++) {
-                if(app.documents[j.name == pdfFile.name) {
+if(app.documents.length > 0) {
+for(var j = 0; j < app.documents.length; j++) {
+if(app.documents[j].name == pdfFile.name) {
 throw "File is already open.";
 }
 }
