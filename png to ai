@@ -1,0 +1,24 @@
+var inputFolder = Folder.selectDialog("Select the input folder");
+var outputFolder = Folder.selectDialog("Select the output folder");
+var pngFiles = inputFolder.getFiles("*.png");
+pngFiles.sort(function(a, b) {
+    return a.name > b.name;
+});
+for (var i = 0; i < pngFiles.length; i++) {
+    var pngFile = pngFiles[i];
+    if (!pngFile.name.endsWith(".ai")) {
+        var doc = app.open(pngFile);
+        var saveFile = new File(outputFolder + "/" + pngFile.name.replace(".png",  ".ai"));
+        var saveOpts = new IllustratorSaveOptions();
+        saveOpts.compatibility = Compatibility.ILLUSTRATOR8;
+        doc.saveAs(saveFile, saveOpts);
+        doc.close();
+    }
+}
+
+setInterval(function() {
+   // call the script again
+}, 3600000);
+
+
+
